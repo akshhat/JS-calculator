@@ -141,6 +141,7 @@ let accumulator = {
   opr: "",
 };
 
+// Clear display function
 const clearDisplay = () => {
   numDisplay.value = 0;
   document.querySelector("#helperText").innerText = "";
@@ -148,18 +149,21 @@ const clearDisplay = () => {
   accumulator.opr = "";
 };
 
+// Deleting a single digit (backspace) function
 const numericDel = () => {
   let num = Number(numDisplay.value);
   num = (num - (num % 10)) / 10;
   numDisplay.value = num;
 };
 
+// Negative number function
 const negate = () => {
   let num = Number(numDisplay.value);
   num = -1 * num;
   numDisplay.value = num;
 };
 
+// Digit typing & decimal operation function
 const numType = (digit) => {
   if (numDisplay.value[numDisplay.value.length - 1] != ".") {
     if (typeof digit == "number") {
@@ -179,6 +183,7 @@ const numType = (digit) => {
   }
 };
 
+// Arithmetic functions
 const arithmetic = (sign) => {
   switch (accumulator.opr) {
     case "+":
@@ -192,7 +197,7 @@ const arithmetic = (sign) => {
       break;
     case "÷":
       if (Number(document.querySelector("#input").value) != 0) {
-        console.log("Not zero");
+        // console.log("Not zero");
         accumulator.val /= Number(document.querySelector("#input").value);
       } else {
         if (accumulator.val == 0) {
@@ -212,6 +217,7 @@ const arithmetic = (sign) => {
   document.querySelector("#input").value = "";
 };
 
+// Answer display function
 const ansPrint = () => {
   arithmetic();
   if (
@@ -230,7 +236,7 @@ const ansPrint = () => {
   document.querySelector("#helperText").innerText = "";
 };
 
-// Testing event delegation
+// Mouse event delegation
 calculator.addEventListener("click", (e) => {
   if (e.target.classList.contains("numeric")) {
     switch (e.target.id) {
@@ -265,11 +271,11 @@ calculator.addEventListener("click", (e) => {
         numType(Number(e.target.id[e.target.id.length - 1]));
         break;
     }
-    console.log(accumulator);
+    // console.log(accumulator);
   }
 });
 
-// Testing keydown events
+// Keyboard (keydown) events
 document.addEventListener("keydown", (e) => {
   switch (e.key) {
     case "Backspace":
@@ -277,6 +283,27 @@ document.addEventListener("keydown", (e) => {
       break;
     case "Delete":
       clearDisplay();
+      break;
+    case "/":
+      arithmetic("÷");
+      break;
+    case "*":
+      arithmetic("×");
+      break;
+    case "-":
+      arithmetic("-");
+      break;
+    case "+":
+      arithmetic("+");
+      break;
+    case "=":
+      ansPrint();
+      break;
+    case "Enter":
+      ansPrint();
+      break;
+    case ".":
+      numType(".");
       break;
     default:
       if (Number(e.key) >= 0 && Number(e.key) <= 9) {
