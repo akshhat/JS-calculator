@@ -78,7 +78,7 @@ input[type="number"]::-webkit-outer-spin-button {
 .numeric {
   height: 97%;
   width: 24.5%;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
 }
 
@@ -103,4 +103,16 @@ button:focus {
 
 button:active {
   background-color: #49545c4f;
+}
+
+#ans {
+  background-color: #0078d498;
+}
+
+#ans:hover {
+  background-color: #0078d4d8;
+}
+
+#ans:active {
+  background-color: #0078d4;
 }

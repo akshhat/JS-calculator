@@ -1,3 +1,4 @@
+// Layout out the calculator
 const calculator = document.querySelector("main");
 const calcKeys = [
   "C",
@@ -6,7 +7,7 @@ const calcKeys = [
   7,
   8,
   9,
-  "x",
+  "×",
   4,
   5,
   6,
@@ -21,6 +22,7 @@ const calcKeys = [
   "=",
 ];
 
+// Giving IDs to btnRows for styling
 for (let i = 0; i < 7; i++) {
   let btnRow = document.createElement("div");
   btnRow.classList.add("btnRow");
@@ -36,6 +38,7 @@ for (let i = 0; i < 7; i++) {
   calculator.appendChild(btnRow);
 }
 
+// Creating the buttons
 document.querySelectorAll(".numKeys").forEach((row, index) => {
   if (index == 0) {
     for (let i = 0; i < 3; i++) {
@@ -55,11 +58,13 @@ document.querySelectorAll(".numKeys").forEach((row, index) => {
   }
 });
 
+// Answer display panel
 let numDisplay = document.createElement("input");
-numDisplay.type = "number";
+numDisplay.type = "text";
 numDisplay.id = "input";
 document.querySelector("#display").appendChild(numDisplay);
 
+// Giving numbers/symbols to respective buttons
 document.querySelectorAll(".numeric").forEach((key, i) => {
   key.innerText = calcKeys[i];
 });
@@ -103,7 +108,7 @@ document.querySelectorAll(".numeric").forEach((button) => {
     case "-":
       button.id = "minus";
       break;
-    case "x":
+    case "×":
       button.id = "multiply";
       break;
     case "÷":
@@ -127,15 +132,141 @@ document.querySelectorAll(".numeric").forEach((button) => {
   }
 });
 
-// Testing helper text
-document.querySelectorAll(".btnRow").forEach((row, index) => {
-  if (index == 0) {
-    row.innerText = "1234567";
+// Starting number in calculator
+numDisplay.value = 0;
+
+// Calculator Functionality
+let accumulator = {
+  val: 0,
+  opr: "",
+};
+
+const clearDisplay = () => {
+  numDisplay.value = 0;
+  document.querySelector("#helperText").innerText = "";
+  accumulator.val = 0;
+  accumulator.opr = "";
+};
+
+const numericDel = () => {
+  let num = Number(numDisplay.value);
+  num = (num - (num % 10)) / 10;
+  numDisplay.value = num;
+};
+
+const negate = () => {
+  let num = Number(numDisplay.value);
+  num = -1 * num;
+  numDisplay.value = num;
+};
+
+const numType = (digit) => {
+  if (typeof digit == "number") {
+    let num = Number(numDisplay.value);
+    num = num * 10 + digit;
+    numDisplay.value = num;
+  }
+};
+
+const arithmetic = (sign) => {
+  switch (accumulator.opr) {
+    case "+":
+      accumulator.val += Number(document.querySelector("#input").value);
+      break;
+    case "-":
+      accumulator.val -= Number(document.querySelector("#input").value);
+      break;
+    case "×":
+      accumulator.val *= Number(document.querySelector("#input").value);
+      break;
+    case "÷":
+      if (Number(document.querySelector("#input").value) != 0) {
+        console.log("Not zero");
+        accumulator.val /= Number(document.querySelector("#input").value);
+      } else {
+        if (accumulator.val == 0) {
+          accumulator.val = "NaN";
+        } else {
+          accumulator.val = "Infinity";
+        }
+      }
+      break;
+    default:
+      accumulator.val = Number(document.querySelector("#input").value);
+  }
+  accumulator.opr = sign;
+  document.querySelector(
+    "#helperText"
+  ).innerText = `${accumulator.val} ${sign}`;
+  document.querySelector("#input").value = "";
+  console.log(accumulator);
+};
+
+const ansPrint = () => {
+  arithmetic();
+  if (
+    typeof accumulator == "number" &&
+    accumulator.val < 999999999999 &&
+    accumulator.val > -999999999999
+  ) {
+    document.querySelector("#input").value = accumulator.val;
+  } else if (typeof accumulator == "number") {
+    document.querySelector("#input").value = "NaN";
+    window.alert("I can only calculate for values between -10^12 & 10^12");
+  } else {
+    document.querySelector("#input").value = accumulator.val;
+  }
+  accumulator.opr = "";
+  document.querySelector("#helperText").innerText = "";
+};
+
+// Testing event delegation
+calculator.addEventListener("click", (e) => {
+  if (e.target.classList.contains("numeric")) {
+    switch (e.target.id) {
+      case "clr":
+        clearDisplay();
+        break;
+      case "del":
+        numericDel();
+        break;
+      case "neg":
+        negate();
+        break;
+      case "divide":
+        arithmetic("÷");
+        break;
+      case "multiply":
+        arithmetic("×");
+        break;
+      case "minus":
+        arithmetic("-");
+        break;
+      case "plus":
+        arithmetic("+");
+        break;
+      case "ans":
+        ansPrint();
+        break;
+      default:
+        numType(Number(e.target.id[e.target.id.length - 1]));
+        break;
+    }
   }
 });
 
-// Calculator Functionality
-document.querySelector("#clr").addEventListener("click", () => {
-  document.querySelector("#input").value = "";
-  document.querySelector("#helperText").innerText = "";
+// Testing keydown events
+document.addEventListener("keydown", (e) => {
+  switch (e.key) {
+    case "Backspace":
+      numericDel();
+      break;
+    case "Delete":
+      clearDisplay();
+      break;
+    default:
+      if (Number(e.key) >= 0 && Number(e.key) <= 9) {
+        numType(Number(e.key));
+      }
+  }
 });
