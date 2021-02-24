@@ -161,9 +161,20 @@ const negate = () => {
 };
 
 const numType = (digit) => {
-  if (typeof digit == "number") {
-    let num = Number(numDisplay.value);
-    num = num * 10 + digit;
+  if (numDisplay.value[numDisplay.value.length - 1] != ".") {
+    if (typeof digit == "number") {
+      let num = Number(numDisplay.value);
+      num = num * 10 + digit;
+      numDisplay.value = num;
+    } else {
+      let num = Number(numDisplay.value);
+      num = num + ".";
+      numDisplay.value = num;
+    }
+  } else {
+    let num = numDisplay.value;
+    num += digit;
+    num = Number(num);
     numDisplay.value = num;
   }
 };
@@ -199,7 +210,6 @@ const arithmetic = (sign) => {
     "#helperText"
   ).innerText = `${accumulator.val} ${sign}`;
   document.querySelector("#input").value = "";
-  console.log(accumulator);
 };
 
 const ansPrint = () => {
@@ -248,10 +258,14 @@ calculator.addEventListener("click", (e) => {
       case "ans":
         ansPrint();
         break;
+      case "dot":
+        numType(".");
+        break;
       default:
         numType(Number(e.target.id[e.target.id.length - 1]));
         break;
     }
+    console.log(accumulator);
   }
 });
 
